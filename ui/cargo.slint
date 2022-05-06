@@ -258,6 +258,7 @@ export struct Feature := {
 
 export CargoView := GridBox {
     // Public properties
+    property <bool> enabled;
     property <string> status: "Cargo UI";
     property <[string]> packages;
     property <bool> allow-package-selection: false;
@@ -291,10 +292,12 @@ export CargoView := GridBox {
         HorizontalLayout {
             colspan: 3;
             le_manifest := LineEdit {
+                enabled: root.enabled;
                 accepted => { root.reload-manifest(le_manifest.text); }
                 horizontal_stretch: 1;
             }
             open_button := Button {
+                enabled: root.enabled;
                 text: "📂";
                 clicked => { root.show-open-dialog(); }
             }
@@ -310,7 +313,7 @@ export CargoView := GridBox {
         HorizontalLayout {
             if allow-package-selection: ComboBox {
                 model: packages;
-                enabled: root.workspace-valid;
+                enabled: root.workspace-valid && root.enabled;
                 current_value <=> current-package;
                 selected(pkg) => { root.package-selected(pkg); }
             }
@@ -319,7 +322,7 @@ export CargoView := GridBox {
         mode_cb := ComboBox {
             current_value: "debug";
             model: ["debug", "release"];
-            enabled: root.workspace-valid;
+            enabled: root.workspace-valid && root.enabled;
         }
         //Text { text: "Toolchain: "; }
         //profile_cb := ComboBox { model: ["stable", "nightly"]; }
@@ -332,7 +335,7 @@ export CargoView := GridBox {
     Row {
         Button {
             text: "🚀 Run";
-            enabled: root.workspace-valid;
+            enabled: root.workspace-valid && root.enabled;
             clicked => {
                 build-pane-visible = true;
                 action({
@@ -346,21 +349,21 @@ export CargoView := GridBox {
         }
         bin_cb := ComboBox {
             model: extra-run;
-            enabled: root.workspace-valid;
+            enabled: root.workspace-valid && root.enabled;
         }
     }
     Row {
         arguments-le := LineEdit {
             colspan: 2;
             placeholder-text: "Command line arguments";
-            enabled: root.workspace-valid;
+            enabled: root.workspace-valid && root.enabled;
         }
     }
 
     Row {
         Button {
             text: "🏗️ Build";
-            enabled: root.workspace-valid;
+            enabled: root.workspace-valid && root.enabled;
             clicked => {
                 build-pane-visible = true;
                 action({
@@ -379,7 +382,7 @@ export CargoView := GridBox {
     Row {
         Button {
             text: "👍 Check";
-            enabled: root.workspace-valid;
+            enabled: root.workspace-valid && root.enabled;
             clicked => {
                 build-pane-visible = true;
                 action({
@@ -398,7 +401,7 @@ export CargoView := GridBox {
     Row {
         Button {
             text: "🧪 Test";
-            enabled: root.workspace-valid;
+            enabled: root.workspace-valid && root.enabled;
             clicked => {
                 build-pane-visible = true;
                 action({
@@ -411,12 +414,13 @@ export CargoView := GridBox {
         }
         test_cb := ComboBox {
             model: extra-test;
-            enabled: root.workspace-valid && root.extra-test.length > 0;
+            enabled: root.workspace-valid && root.extra-test.length > 0 && root.enabled;
         }
     }
 
     Row {
         Button {
+            enabled: root.enabled;
             colspan: 2;
             text: "🌳 Show Dependencies";
             clicked => { deptree-pane-visible = true; }
@@ -442,16 +446,16 @@ export CargoView := GridBox {
         title: "Features";
         VerticalBox {
             CheckBox {
+                enabled: root.enabled;
                 text: "Enable Default Features";
                 checked <=> root.enable-default-features;
-                enabled: true;
             }
             if has-features: ListView {
                 for feature in package-features:  HorizontalLayout {
                     CheckBox {
                         text: feature.name + (!enabled ? " (enabled by default)" : "");
                         checked: feature.enabled;
-                        enabled: !feature.enabled_by_default || !root.enable-default-features;
+                        enabled: !(feature.enabled_by_default && root.enable-default-features) && root.enabled;
                         toggled => {
                             feature.enabled = checked;
                         }

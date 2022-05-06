@@ -53,23 +53,28 @@ CargoUI := Window {
     property toolchains <=> rustup-view.toolchains;
     property toolchains-available <=> rustup-view.toolchains-available;
 
+    property <bool> covered: true || is-building || build-pane-visible;
+
     VerticalBox {
-        TabWidget {
+        tw := TabWidget {
+            enabled: !covered;
+
             Tab {
                 title: "Project / Workspace";
                 cargo-view := CargoView {
+                    enabled: !covered;
                     background: root.background;
                 }
             }
 
             Tab {
                 title: "Install";
-                CargoInstallView { }
+                CargoInstallView { enabled: !covered; }
             }
 
             Tab {
                 title: "Toolchains";
-                rustup-view := RustupView { }
+                rustup-view := RustupView { enabled: !covered; }
             }
 
             Tab {

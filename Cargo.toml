@@ -37,3 +37,12 @@ toml_edit = "0.13.4"
 
 [build-dependencies]
 slint-build = { version = "0.2.0" }
+
+[patch.crates-io]
+# sixtyfps = { path = "../sixtyfps/api/sixtyfps-rs" }
+# sixtyfps-build = { path = "../sixtyfps/api/sixtyfps-rs/sixtyfps-build" }
+# sixtyfps-compilerlib = { path = "../sixtyfps/sixtyfps_compiler" }
+
+slint = { path = "../slint/api/rs/slint" }
+slint-build = { path = "../slint/api/rs/build" }
+i-slint-compiler = { path = "../slint/internal/compiler" }

@@ -29,6 +29,7 @@ export global CargoInstallData := {
 
 export CargoInstallView := GridBox {
 
+    property <bool> enabled;
     property <bool> completion_shown;
 
     // This is kind of a hack to get animated progressbar and have an animation that runs forever
@@ -50,6 +51,7 @@ export CargoInstallView := GridBox {
             vertical-alignment: center;
         }
         Button {
+            enabled <=> root.enabled;
             text: "🔄 Upgrade all";
             clicked => {
                 CargoInstallData.upgrade_all();
@@ -81,6 +83,7 @@ export CargoInstallView := GridBox {
                     }
                 }
                 if !crate.queued : Button {
+                    enabled <=> root.enabled;
                     text: "🗑️ Uninstall";
                     clicked => {
                         crate.queued = true;
@@ -173,6 +176,7 @@ export CargoInstallView := GridBox {
         }
         Button {
             text: "📀 Install";
+            enabled <=> root.enabled;
             clicked => {
                 CargoInstallData.install(install-le.text);
                 ensure-start-animation();
